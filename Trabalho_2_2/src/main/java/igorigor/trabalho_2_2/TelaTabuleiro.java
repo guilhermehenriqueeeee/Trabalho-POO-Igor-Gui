@@ -111,10 +111,10 @@ public class TelaTabuleiro extends JFrame{
                         if (resultado == JFileChooser.APPROVE_OPTION) {
                             try {
                                 PrintWriter writer = new PrintWriter(escolhedorDeArquivo.getSelectedFile());
-                                writer.print(tabuleiro.getColunas() + " " + tabuleiro.getLinhas() + "\n");
-                                writer.print(tabuleiro.paraArquivo2(tabuleiro.getMatrizCelulas()));
+                                writer.print(novoTabuleiro.getColunas() + " " + novoTabuleiro.getLinhas() + "\n");
+                                writer.print(novoTabuleiro.paraArquivo2(novoTabuleiro.getMatrizCelulas()));
                                 writer.println();
-                                writer.print(tabuleiro.retornaMatrizEstadosInicial());
+                                writer.print(novoTabuleiro.retornaMatrizEstados());
                                 writer.close();
                                 JOptionPane.showMessageDialog(TelaTabuleiro.this, "Tabuleiro salvo com sucesso!");
                             } catch (FileNotFoundException ex) {
