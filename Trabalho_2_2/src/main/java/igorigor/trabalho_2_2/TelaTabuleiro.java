@@ -22,6 +22,16 @@ public class TelaTabuleiro extends JFrame{
     private JPanel painelSul;
     private JLabel[][] matrizDeLabel;
     private int[][] novaMatrizEstados;
+    private JLabel labelTempoEntreTelas;
+    private JLabel labelNumeroInteracoes;
+    private JLabel labelPronto;
+    private JPanel painelInteracoes;
+    private JPanel painelTempo;
+    private JTextArea areaTempoEntreTelas;
+    private JTextArea areaNumeroInteracoes;
+    private JButton botaoOk;
+    private int tempoIntervalo;
+    private int numInteracoes;
     
     public TelaTabuleiro(Tabuleiro tabuleiro){
         
@@ -36,12 +46,33 @@ public class TelaTabuleiro extends JFrame{
         botaoEditar.setEnabled(false);
         botaoEditar.setActionCommand("Editar");
 
-        stringTabuleiro = new JPanel(new GridLayout());
+        stringTabuleiro = new JPanel(new GridLayout(3, 1));
+        
+        painelInteracoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        painelTempo = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        
+        labelTempoEntreTelas = new JLabel("Intervalo entre as interações (ms): ");
+        labelTempoEntreTelas.setFont(new Font("Arial", Font.BOLD, 15));
+        labelNumeroInteracoes = new JLabel("Número de interações: ");
+        labelNumeroInteracoes.setFont(new Font("Arial", Font.BOLD, 15));
+        areaTempoEntreTelas = new JTextArea(1, 5);
+        areaNumeroInteracoes = new JTextArea(1, 5);
+        botaoOk = new JButton("OK");
+        
+        painelInteracoes.add(labelNumeroInteracoes);
+        painelInteracoes.add(areaNumeroInteracoes);
+        painelTempo.add(labelTempoEntreTelas);
+        painelTempo.add(areaTempoEntreTelas);
         
         barraDeMenus = new JMenuBar();
         setJMenuBar(barraDeMenus);
         
+        stringTabuleiro.add(painelInteracoes);
+        stringTabuleiro.add(painelTempo);
+        stringTabuleiro.add(botaoOk);
+        
         menuArquivo = new JMenu("Arquivo"); 
+        botaoOk.setActionCommand("botaoOkTempoEntreTelas");
         
         abrir = new JMenuItem("Abrir"); 
         abrir.setActionCommand("Abrir");
@@ -53,6 +84,7 @@ public class TelaTabuleiro extends JFrame{
         menuArquivo.add(salvar); 
         
         barraDeMenus.add(menuArquivo); 
+        menuArquivo.setEnabled(false);
         
         escolhedorDeArquivo = new JFileChooser();
         
@@ -106,7 +138,6 @@ public class TelaTabuleiro extends JFrame{
                         break; 
 
                     case "Salvar":
-                    {
                         resultado = escolhedorDeArquivo.showSaveDialog(TelaTabuleiro.this);
                         if (resultado == JFileChooser.APPROVE_OPTION) {
                             try {
@@ -121,7 +152,6 @@ public class TelaTabuleiro extends JFrame{
                                 JOptionPane.showMessageDialog(TelaTabuleiro.this, "Erro ao salvar o arquivo: " + ex.getMessage());
                             }
                         }
-                    }
                         break; 
                     
                     case "Avançar":
@@ -139,6 +169,16 @@ public class TelaTabuleiro extends JFrame{
                         stringTabuleiro.revalidate();
                         stringTabuleiro.repaint();
                         break;
+                    
+                    case "botaoOkTempoEntreTelas":
+                        try{
+                        numInteracoes = Integer.parseInt(areaNumeroInteracoes.getText());
+                        tempoIntervalo = Integer.parseInt(areaTempoEntreTelas.getText());
+                        menuArquivo.setEnabled(true);
+                        }catch(NumberFormatException e1){
+                            JOptionPane.showMessageDialog(null, "Por favor, insira um valor.");
+                            return;
+                        }
                 }
             }
         };
@@ -147,6 +187,7 @@ public class TelaTabuleiro extends JFrame{
         salvar.addActionListener(listener); 
         botaoAvancar.addActionListener(listener);
         botaoEditar.addActionListener(listener);
+        botaoOk.addActionListener(listener);
         
         add(stringTabuleiro, BorderLayout.CENTER);
         
