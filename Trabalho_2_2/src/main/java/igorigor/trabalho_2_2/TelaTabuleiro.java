@@ -32,6 +32,7 @@ public class TelaTabuleiro extends JFrame{
     private JButton botaoOk;
     private int tempoIntervalo;
     private int numInteracoes;
+    private int contadorInteracoes = 0;
     
     public TelaTabuleiro(Tabuleiro tabuleiro){
         
@@ -58,6 +59,11 @@ public class TelaTabuleiro extends JFrame{
         areaTempoEntreTelas = new JTextArea(1, 5);
         areaNumeroInteracoes = new JTextArea(1, 5);
         botaoOk = new JButton("OK");
+        botaoOk.setBackground(Color.BLACK);
+        botaoOk.setForeground(Color.WHITE);
+        
+        painelInteracoes.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+        painelTempo.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         
         painelInteracoes.add(labelNumeroInteracoes);
         painelInteracoes.add(areaNumeroInteracoes);
@@ -168,13 +174,32 @@ public class TelaTabuleiro extends JFrame{
                         }
                         stringTabuleiro.revalidate();
                         stringTabuleiro.repaint();
+                        contadorInteracoes++;
+                        if(contadorInteracoes == numInteracoes){
+                            botaoAvancar.setEnabled(false);
+                            JOptionPane.showMessageDialog(null, "FIM DE JOGO!");
+                        }
                         break;
                     
                     case "botaoOkTempoEntreTelas":
                         try{
                         numInteracoes = Integer.parseInt(areaNumeroInteracoes.getText());
                         tempoIntervalo = Integer.parseInt(areaTempoEntreTelas.getText());
+                        
+                        if(numInteracoes < 1 || numInteracoes > 100){
+                            JOptionPane.showMessageDialog(null, "O número de interações deve estar entre 1 e 100.");
+                            return;
+                        }
+                        
+                        if(tempoIntervalo < 0 || tempoIntervalo > 2000){
+                            JOptionPane.showMessageDialog(null, "O tempo de intervalo deve ser entre 0 e 2000 ms.");
+                            return;
+                        }
+                        
                         menuArquivo.setEnabled(true);
+                        botaoOk.setEnabled(false);
+                        break;
+                        
                         }catch(NumberFormatException e1){
                             JOptionPane.showMessageDialog(null, "Por favor, insira um valor.");
                             return;
