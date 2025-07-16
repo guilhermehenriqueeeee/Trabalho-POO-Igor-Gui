@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.InputMismatchException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public class TelaTabuleiro extends JFrame{
@@ -161,23 +163,48 @@ public class TelaTabuleiro extends JFrame{
                         break; 
                     
                     case "Avançar":
-                        novoTabuleiro.logica();
-                        novoTabuleiro.copiaMatrizes();
-                        for(int i = 0; i < novoTabuleiro.getLinhas(); i++){
-                            for(int j = 0; j < novoTabuleiro.getColunas(); j++){
-                                if(novoTabuleiro.getMatrizEstados()[i + 1][j + 1] == 1){
-                                        matrizDeLabel[i][j].setText(String.valueOf(novoTabuleiro.getMatrizCelulas()[i + 1][j + 1]));
-                                }else{
-                                        matrizDeLabel[i][j].setText(".");
-                                }
-                            }
-                        }
-                        stringTabuleiro.revalidate();
-                        stringTabuleiro.repaint();
-                        contadorInteracoes++;
-                        if(contadorInteracoes == numInteracoes){
+                        
+                        if(contadorInteracoes < numInteracoes) {
                             botaoAvancar.setEnabled(false);
-                            JOptionPane.showMessageDialog(null, "FIM DE JOGO!");
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Thread.sleep(tempoIntervalo);
+                                    } catch (InterruptedException ex) {
+                                        Thread.currentThread().interrupt();
+                                        Logger.getLogger(TelaTabuleiro.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            novoTabuleiro.logica();
+                                            novoTabuleiro.copiaMatrizes();
+                                            for(int i = 0; i < novoTabuleiro.getLinhas(); i++){
+                                                for(int j = 0; j < novoTabuleiro.getColunas(); j++){
+                                                    if(novoTabuleiro.getMatrizEstados()[i + 1][j + 1] == 1){
+                                                        matrizDeLabel[i][j].setText(String.valueOf(novoTabuleiro.getMatrizCelulas()[i + 1][j + 1]));
+                                                    }else{
+                                                        matrizDeLabel[i][j].setText(".");
+                                                    }
+                                                }
+                                            }
+                                            stringTabuleiro.revalidate();
+                                            stringTabuleiro.repaint();
+                                            contadorInteracoes++;
+                                            
+                                            if(contadorInteracoes == numInteracoes){
+                                                botaoAvancar.setEnabled(false);
+                                                JOptionPane.showMessageDialog(null, "FIM DE JOGO!");
+                                            } else {
+                                                botaoAvancar.setEnabled(true);
+                                            }
+                                        }
+                                    });
+                                }
+                            }).start();
                         }
                         break;
                     
