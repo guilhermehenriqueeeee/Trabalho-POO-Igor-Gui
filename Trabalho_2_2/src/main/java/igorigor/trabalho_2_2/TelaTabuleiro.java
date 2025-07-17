@@ -15,6 +15,8 @@ public class TelaTabuleiro extends JFrame{
     private JPanel stringTabuleiro;
     private JMenuBar barraDeMenus;
     private JMenu menuArquivo; 
+    private JMenu menuSobre;
+    private JMenuItem sobre;
     private JMenuItem abrir; 
     private JMenuItem salvar; 
     private JFileChooser escolhedorDeArquivo;
@@ -38,6 +40,7 @@ public class TelaTabuleiro extends JFrame{
     
     public TelaTabuleiro(Tabuleiro tabuleiro){
         
+        setTitle("JOGO DA VIDA CONWAY");
         setSize(500, 500);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -94,6 +97,12 @@ public class TelaTabuleiro extends JFrame{
         barraDeMenus.add(menuArquivo); 
         menuArquivo.setEnabled(false);
         
+        menuSobre = new JMenu("Sobre");
+        sobre = new JMenuItem("Sobre");
+        sobre.setActionCommand("Sobre");
+        menuSobre.add(sobre);
+        barraDeMenus.add(menuSobre);
+        
         escolhedorDeArquivo = new JFileChooser();
         
         ActionListener listener = new ActionListener() {
@@ -135,6 +144,7 @@ public class TelaTabuleiro extends JFrame{
                                 stringTabuleiro.revalidate();
                                 stringTabuleiro.repaint();
                                 botaoAvancar.setEnabled(true);
+                                botaoEditar.setEnabled(true);
                                 novaMatrizEstados = new int[novoTabuleiro.getLinhas()][novoTabuleiro.getColunas()];
                             } catch (FileNotFoundException ex) {
                                 JOptionPane.showMessageDialog(TelaTabuleiro.this, "Erro ao abrir o arquivo: " + ex.getMessage());
@@ -231,9 +241,46 @@ public class TelaTabuleiro extends JFrame{
                             JOptionPane.showMessageDialog(null, "Por favor, insira um valor.");
                             return;
                         }
+                    case "Editar":
+                        TelaEdicao telaEdicao = new TelaEdicao(novoTabuleiro, TelaTabuleiro.this);
+                        telaEdicao.setVisible(true);
+                        setVisible(false); 
+                        break;      
                 }
             }
         };
+        
+        sobre.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+        JOptionPane.showMessageDialog(null, 
+        "\n" +
+        "O Jogo da Vida é um autômato celular criado por John Conway em 1970. \n"
+        + "Trata-se de uma simulação onde células, dispostas em um tabuleiro bidimensional, \n"
+        + "evoluem automaticamente a cada rodada (ou geração) de acordo com regras pré-definidas.\n" +
+        "\n" +
+        "Célula Clássica (+)\n" +
+        "1. Toda célula morta com exatamente três vizinhos vivos torna-se viva\n" +
+        "2. Toda célula viva com menos de dois vizinhos vivos morre por isolamento \n" +
+        "3. Toda célula viva com mais de três vizinhos morre por superpopulação \n" +
+        "4. Toda célula viva com dois ou três vizinhos permanece viva \n" +
+                
+        "\nCélula Forte (@)\n" +
+        "* Viva: só morre se tiver menos de 2 vizinhos vivos.\n" +
+        "* Morta: torna-se viva se tiver mais de 4 vizinhos vivos.\n" +
+        "\nCélula Tímida (&)\n" +
+                
+        "* Viva: morre se qualquer vizinho estiver vivo.\n" +
+        "* Morta: só nasce se nenhum vizinho estiver vivo.\n" +
+        "\nCélula Matemática (#)\n" +
+                
+        "* Viva: continua viva apenas se o número de vizinhos vivos for ímpar.\n" +
+        "* Morta: nasce apenas se o número de vizinhos vivos for par.\n" +
+                
+        "\n Desenvolvido por Guilherme Henrique de Sousa e Igor Gabriel Daré Grubisich",
+        "Sobre o Jogo", 
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+});
         
         abrir.addActionListener(listener); 
         salvar.addActionListener(listener); 
